@@ -1,6 +1,16 @@
 const s = require("Scene");
 const p = require("Patches");
 
-p.getScalarValue("score").monitor().subscribe(()=>{
-s.root.find(p.getStringValue("textname").pinLastValue()).text = p.getScalarValue("score").toString();
-});
+
+(async () => {
+
+    const name = await p.outputs.getString("textname");
+    const text = await s.root.findFirst(name.pinLastValue());
+
+
+    p.outputs.getScalar("score").then(e => {
+        e.monitor().subscribe((ea) => {
+            text.text = ea.newValue.toString();
+        });
+    });
+})()
